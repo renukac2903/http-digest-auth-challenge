@@ -35,3 +35,10 @@ The `qop` parameter is a quoted string that *contains commas* (e.g. `qop="auth,a
 ## Determinism
 
 `build_authorization` generates a client nonce (`cnonce`) internally when you don't pass one. The generated value is not deterministic, but the computation that uses it is — tests assert on the response hash for fixed inputs, not on the cnonce value itself. The `clock` argument is accepted for API symmetry and future extensions (e.g. nonce freshness checks) but does not affect the digest computation today.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
